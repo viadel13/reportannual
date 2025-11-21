@@ -9,7 +9,7 @@ export default function Home() {
   const [currentYear] = useState(new Date().getFullYear());
   
   // Données mensuelles avec EC, ER et IR pour chaque mois
-  const [monthlyData, setMonthlyData] = useState({
+  const [monthlyData, setMonthlyData] = useState<any>({
     janvier: { ec: '', er: '5000', ir: '150' },
     fevrier: { ec: '', er: '5000', ir: '150' },
     mars: { ec: '', er: '5000', ir: '150' },
@@ -23,7 +23,7 @@ export default function Home() {
   });
   
   // État pour gérer l'ouverture/fermeture des collapses
-  const [expandedMonths, setExpandedMonths] = useState({});
+  const [expandedMonths, setExpandedMonths] = useState<any>({});
   
   const [showRecap, setShowRecap] = useState(false);
 
@@ -47,8 +47,8 @@ export default function Home() {
     }));
   };
 
-  const toggleExpand = (month) => {
-    setExpandedMonths(prev => ({
+  const toggleExpand = (month: any) => {
+    setExpandedMonths((prev:any) => ({
       ...prev,
       [month]: !prev[month]
     }));
