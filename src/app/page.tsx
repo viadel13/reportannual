@@ -46,7 +46,7 @@ export default function Home() {
   };
 
   const calculateResults = () => {
-    const results = [];
+    const results: any[] = [];
     const ER = Math.floor(parseFloat(epargneReunion) || 0); // Only consider the integer part
     const IR = Math.floor(parseFloat(interetReunion) || 0); // Only consider the integer part
 
