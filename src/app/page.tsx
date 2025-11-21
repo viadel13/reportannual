@@ -38,7 +38,7 @@ export default function Home() {
   ];
 
   const handleMonthlyChange = (month:any, field:any, value:any) => {
-    setMonthlyData(prev => ({
+    setMonthlyData((prev: any) => ({
       ...prev,
       [month]: {
         ...prev[month],
