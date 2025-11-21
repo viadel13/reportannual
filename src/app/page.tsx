@@ -37,7 +37,7 @@ export default function Home() {
     'JUILLET', 'AOUT', 'SEPTEMBRE', 'OCTOBRE'
   ];
 
-  const handleMonthlyChange = (month, field, value) => {
+  const handleMonthlyChange = (month:any, field:any, value:any) => {
     setMonthlyData(prev => ({
       ...prev,
       [month]: {
@@ -64,7 +64,7 @@ export default function Home() {
   };
 
   const calculateResults = () => {
-    const results = [];
+    const results: any[] = [];
     
     let TR_prev = 0;
     let CC_prev = 0;
