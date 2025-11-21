@@ -47,10 +47,10 @@ export default function Home() {
 
   const calculateResults = () => {
     const results = [];
-    const ER = parseFloat(epargneReunion) || 0;
-    const IR = parseFloat(interetReunion) || 0;
+    const ER = Math.floor(parseFloat(epargneReunion) || 0); // Only consider the integer part
+    const IR = Math.floor(parseFloat(interetReunion) || 0); // Only consider the integer part
 
-    const allEC = mois.map(m => parseFloat(monthlyData[m]) || 0);
+    const allEC = mois.map(m => Math.floor(parseFloat(monthlyData[m]) || 0)); // Only consider the integer part
 
     let TR_prev = 0;
     let CC_prev = 0;
@@ -66,9 +66,9 @@ export default function Home() {
         IC = (EC * IR) / TR;
         CC = EC + IC + allEC[1];
 
-        formuleTR = `ER = ${ER.toFixed(2)}`;
-        formuleIC = `(EC${moisLabels[0]} × IR${moisLabels[0]}) ÷ TR${moisLabels[0]} = (${EC.toFixed(2)} × ${IR.toFixed(2)}) ÷ ${TR.toFixed(2)}`;
-        formuleCC = `EC${moisLabels[0]} + IC${moisLabels[0]} + EC${moisLabels[1]} = ${EC.toFixed(2)} + ${IC.toFixed(2)} + ${allEC[1].toFixed(2)}`;
+        formuleTR = `ER = ${ER.toFixed(0)} FRCFA`;
+        formuleIC = `(EC${moisLabels[0]} × IR${moisLabels[0]}) ÷ TR${moisLabels[0]} = (${EC.toFixed(0)} × ${IR.toFixed(0)}) ÷ ${TR.toFixed(0)}`;
+        formuleCC = `EC${moisLabels[0]} + IC${moisLabels[0]} + EC${moisLabels[1]} = ${EC.toFixed(0)} + ${IC.toFixed(0)} + ${allEC[1].toFixed(0)}`;
       } else {
         // FEVRIER à OCTOBRE
         TR = TR_prev + IR + ER;
@@ -76,24 +76,24 @@ export default function Home() {
         const nextEC = index < 9 ? allEC[index + 1] : 0;
         CC = CC_prev + IC + nextEC;
 
-        formuleTR = `TR${moisLabels[index-1]} + IR${moisLabels[index-1]} + ER${moisLabels[index]} = ${TR_prev.toFixed(2)} + ${IR.toFixed(2)} + ${ER.toFixed(2)}`;
-        formuleIC = `(CC${moisLabels[index-1]} × IR${moisLabels[index]}) ÷ TR${moisLabels[index]} = (${CC_prev.toFixed(2)} × ${IR.toFixed(2)}) ÷ ${TR.toFixed(2)}`;
+        formuleTR = `TR${moisLabels[index-1]} + IR${moisLabels[index-1]} + ER${moisLabels[index]} = ${TR_prev.toFixed(0)} + ${IR.toFixed(0)} + ${ER.toFixed(0)}`;
+        formuleIC = `(CC${moisLabels[index-1]} × IR${moisLabels[index]}) ÷ TR${moisLabels[index]} = (${CC_prev.toFixed(0)} × ${IR.toFixed(0)}) ÷ ${TR.toFixed(0)}`;
 
         if (index < 9) {
-          formuleCC = `CC${moisLabels[index-1]} + IC${moisLabels[index]} + EC${moisLabels[index+1]} = ${CC_prev.toFixed(2)} + ${IC.toFixed(2)} + ${nextEC.toFixed(2)}`;
+          formuleCC = `CC${moisLabels[index-1]} + IC${moisLabels[index]} + EC${moisLabels[index+1]} = ${CC_prev.toFixed(0)} + ${IC.toFixed(0)} + ${nextEC.toFixed(0)}`;
         } else {
-          formuleCC = `CC${moisLabels[index-1]} + IC${moisLabels[index]} = ${CC_prev.toFixed(2)} + ${IC.toFixed(2)}`;
+          formuleCC = `CC${moisLabels[index-1]} + IC${moisLabels[index]} = ${CC_prev.toFixed(0)} + ${IC.toFixed(0)}`;
         }
       }
 
       results.push({
         mois: moisLabels[index],
-        ER: ER.toFixed(2),
-        IR: IR.toFixed(2),
-        TR: TR.toFixed(2),
-        EC: EC.toFixed(2),
-        IC: IC.toFixed(2),
-        CC: CC.toFixed(2),
+        ER: ER.toFixed(0),
+        IR: IR.toFixed(0),
+        TR: TR.toFixed(0),
+        EC: EC.toFixed(0),
+        IC: IC.toFixed(0),
+        CC: CC.toFixed(0),
         formules: {
           TR: formuleTR,
           IC: formuleIC,
@@ -142,7 +142,7 @@ export default function Home() {
                   <Grid container spacing={3}>
                     <Grid size={{xs: 12, md: 4}}>
                       <TextField
-                          label="Épargne Réunion (ER) - €"
+                          label="Épargne Réunion (ER) - FRCFA"
                           type="number"
                           fullWidth
                           value={epargneReunion}
@@ -154,7 +154,7 @@ export default function Home() {
                     </Grid>
                     <Grid size={{xs: 12, md: 4}}>
                       <TextField
-                          label="Intérêt Réunion (IR) - €"
+                          label="Intérêt Réunion (IR) - FRCFA"
                           type="number"
                           fullWidth
                           value={interetReunion}
@@ -190,38 +190,11 @@ export default function Home() {
                               fullWidth
                               value={monthlyData[month]}
                               onChange={(e) => handleMonthlyChange(month, e.target.value)}
-                              placeholder="€"
+                              placeholder="FRCFA"
                               variant="outlined"
                           />
                         </Grid>
                     ))}
-                  </Grid>
-                </Paper>
-
-                {/* Légende */}
-                <Paper sx={{ padding: 3, marginBottom: 4, backgroundColor: '#fff9c4', boxShadow: 2 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
-                    📖 Légende des Abréviations
-                  </Typography>
-                  <Grid container spacing={2}>
-                    <Grid size={{xs: 6, sm: 4, md: 2}}>
-                      <Typography variant="body2"><strong>TR:</strong> Total Réunion</Typography>
-                    </Grid>
-                    <Grid size={{xs: 6, sm: 4, md: 2}}>
-                      <Typography variant="body2"><strong>CC:</strong> Capital Client</Typography>
-                    </Grid>
-                    <Grid size={{xs: 6, sm: 4, md: 2}}>
-                      <Typography variant="body2"><strong>IR:</strong> Intérêt Réunion</Typography>
-                    </Grid>
-                    <Grid size={{xs: 6, sm: 4, md: 2}}>
-                      <Typography variant="body2"><strong>IC:</strong> Intérêt Client</Typography>
-                    </Grid>
-                    <Grid size={{xs: 6, sm: 4, md: 2}}>
-                      <Typography variant="body2"><strong>EC:</strong> Épargne Client</Typography>
-                    </Grid>
-                    <Grid size={{xs: 6, sm: 4, md: 2}}>
-                      <Typography variant="body2"><strong>ER:</strong> Épargne Réunion</Typography>
-                    </Grid>
                   </Grid>
                 </Paper>
 
@@ -238,22 +211,13 @@ export default function Home() {
               </Box>
           ) : (
               <Paper sx={{ padding: 3, boxShadow: 3 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                  <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#333' }}>
-                    📊 Récapitulatif Annuel {currentYear}
-                  </Typography>
-                  <Button onClick={() => setShowRecap(false)} variant="outlined" color="secondary">
-                    Modifier
-                  </Button>
-                </Box>
-
                 {/* Résumé global */}
                 <Grid container spacing={3} sx={{ marginBottom: 4 }}>
                   <Grid size={{xs: 12, sm: 4}}>
                     <Paper sx={{ padding: 2, backgroundColor: '#e3f2fd', boxShadow: 2 }}>
                       <Typography variant="body1" sx={{ color: '#555' }}>Épargne Réunion (ER)</Typography>
                       <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#2196f3' }}>
-                        {parseFloat(epargneReunion).toFixed(2)} €
+                        {parseInt(epargneReunion).toFixed(0)} FRCFA
                       </Typography>
                     </Paper>
                   </Grid>
@@ -261,7 +225,7 @@ export default function Home() {
                     <Paper sx={{ padding: 2, backgroundColor: '#c8e6c9', boxShadow: 2 }}>
                       <Typography variant="body1" sx={{ color: '#555' }}>Intérêt Réunion (IR)</Typography>
                       <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#388e3c' }}>
-                        {parseFloat(interetReunion).toFixed(2)} €
+                        {parseInt(interetReunion).toFixed(0)} FRCFA
                       </Typography>
                     </Paper>
                   </Grid>
@@ -269,7 +233,7 @@ export default function Home() {
                     <Paper sx={{ padding: 2, backgroundColor: '#f3e5f5', boxShadow: 2 }}>
                       <Typography variant="body1" sx={{ color: '#555' }}>Total Épargne Client</Typography>
                       <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#9c27b0' }}>
-                        {Object.values(monthlyData).reduce((sum, val) => sum + (parseFloat(val) || 0), 0).toFixed(2)} €
+                        {Object.values(monthlyData).reduce((sum, val) => sum + (parseInt(val) || 0), 0).toFixed(0)} FRCFA
                       </Typography>
                     </Paper>
                   </Grid>
@@ -295,12 +259,12 @@ export default function Home() {
                             {/* Ligne des valeurs */}
                             <TableRow sx={{ backgroundColor: index % 2 === 0 ? '#f5f5f5' : 'white' }}>
                               <TableCell sx={{ fontWeight: 'bold', fontSize: '0.95rem' }}>{row.mois}</TableCell>
-                              <TableCell align="right" sx={{ color: '#1976d2', fontWeight: 'bold' }}>{row.ER} €</TableCell>
-                              <TableCell align="right" sx={{ color: '#388e3c', fontWeight: 'bold' }}>{row.IR} €</TableCell>
-                              <TableCell align="right" sx={{ backgroundColor: '#e3f2fd', fontWeight: 'bold', color: '#1565c0' }}>{row.TR} €</TableCell>
-                              <TableCell align="right" sx={{ color: '#9c27b0', fontWeight: 'bold' }}>{row.EC} €</TableCell>
-                              <TableCell align="right" sx={{ backgroundColor: '#fff3e0', fontWeight: 'bold', color: '#e65100' }}>{row.IC} €</TableCell>
-                              <TableCell align="right" sx={{ backgroundColor: '#f3e5f5', fontWeight: 'bold', color: '#6a1b9a' }}>{row.CC} €</TableCell>
+                              <TableCell align="right" sx={{ color: '#1976d2', fontWeight: 'bold' }}>{row.ER} FRCFA</TableCell>
+                              <TableCell align="right" sx={{ color: '#388e3c', fontWeight: 'bold' }}>{row.IR} FRCFA</TableCell>
+                              <TableCell align="right" sx={{ backgroundColor: '#e3f2fd', fontWeight: 'bold', color: '#1565c0' }}>{row.TR} FRCFA</TableCell>
+                              <TableCell align="right" sx={{ color: '#9c27b0', fontWeight: 'bold' }}>{row.EC} FRCFA</TableCell>
+                              <TableCell align="right" sx={{ backgroundColor: '#fff3e0', fontWeight: 'bold', color: '#e65100' }}>{row.IC} FRCFA</TableCell>
+                              <TableCell align="right" sx={{ backgroundColor: '#f3e5f5', fontWeight: 'bold', color: '#6a1b9a' }}>{row.CC} FRCFA</TableCell>
                             </TableRow>
 
                             {/* Ligne des formules */}
