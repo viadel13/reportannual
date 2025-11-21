@@ -9,7 +9,7 @@ export default function Home() {
   const [currentYear] = useState(new Date().getFullYear());
   const [epargneReunion, setEpargneReunion] = useState('');
   const [interetReunion, setInteretReunion] = useState('');
-  const [monthlyData, setMonthlyData] = useState({
+  const [monthlyData, setMonthlyData] = useState<Record<string, string>>({
     janvier: '', fevrier: '', mars: '', avril: '', mai: '', juin: '',
     juillet: '', aout: '', septembre: '', octobre: ''
   });
@@ -25,7 +25,7 @@ export default function Home() {
     'JUILLET', 'AOUT', 'SEPTEMBRE', 'OCTOBRE'
   ];
 
-  const handleMonthlyChange = (month, value) => {
+  const handleMonthlyChange = (month: keyof typeof monthlyData, value:string) => {
     setMonthlyData(prev => ({
       ...prev,
       [month]: value
