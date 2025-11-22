@@ -1,6 +1,4 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
   --background: #e8f5e9;
   --foreground: #0f172a;
   color-scheme: light;
@@ -26,6 +24,29 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+
+.pwa-install {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 50;
+  padding: 0.85rem 1.25rem;
+  background: #166534;
+  color: #f8fafc;
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+}
+
+.pwa-install:hover {
+  background: #15803d;
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.2);
 }
 
 * {

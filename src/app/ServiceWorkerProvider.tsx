@@ -4,9 +4,19 @@ import { useEffect } from "react";
 
 const SERVICE_WORKER_PATH = "/sw.js";
 
+function shouldRegisterServiceWorker() {
+    if (typeof window === "undefined") return false;
+
+    const isLocalhost = ["localhost", "127.0.0.1", "::1"].includes(
+        window.location.hostname
+    );
+
+    return process.env.NODE_ENV === "production" || isLocalhost;
+}
+
 export function ServiceWorkerProvider() {
     useEffect(() => {
-        if (process.env.NODE_ENV !== "production") {
+        if (!shouldRegisterServiceWorker()) {
             return;
         }
 
