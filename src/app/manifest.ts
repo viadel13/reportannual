@@ -1,0 +1,31 @@
+import type { MetadataRoute } from "next";
+
+export default function manifest(): MetadataRoute.Manifest {
+    return {
+        name: "ReportAnnual",
+        short_name: "ReportAnnual",
+        description:
+            "Application de bilan financier annuel avec saisie mensuelle et récapitulatif dynamique.",
+        start_url: "/",
+        display: "standalone",
+        background_color: "#e8f5e9",
+        theme_color: "#166534",
+        lang: "fr",
+        scope: "/",
+        orientation: "portrait",
+        icons: [
+            {
+                src: "/icon-192.png",
+                sizes: "192x192",
+                type: "image/png",
+                purpose: "maskable",
+            },
+            {
+                src: "/icon-512.png",
+                sizes: "512x512",
+                type: "image/png",
+                purpose: "maskable",
+            },
+        ],
+    };
+}
