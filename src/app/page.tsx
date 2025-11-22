@@ -134,15 +134,15 @@ export default function Home() {
 
 
   return (
-    <Box sx={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, #e0f2f1, #bbdefb)', padding: 3 }}>
+    <Box sx={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, #e0f2f1, #bbdefb)', padding: 1 }}>
       <Box sx={{ maxWidth: 1400, margin: '0 auto' }}>
         {/* Header */}
-        <Paper sx={{ padding: 3, marginBottom: 4, boxShadow: 3 }}>
+        <Paper sx={{ padding: 1, marginBottom: 4, boxShadow: 3 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <CalendarToday sx={{ fontSize: 36, color: '#4caf50', marginRight: 2 }} />
               <Box>
-                <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#333' }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#333' }}>
                   Bilan Financier Annuel
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#777' }}>
@@ -157,7 +157,7 @@ export default function Home() {
         {!showRecap ? (
           <Box>
             {/* Section mensuelle avec paramètres ER et IR en collapse */}
-            <Paper sx={{ padding: 3, marginBottom: 4, boxShadow: 2 }}>
+            <Paper sx={{ padding: 1, marginBottom: 4, boxShadow: 2 }}>
               <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#333', marginBottom: 3 }}>
                 Saisie Mensuelle (Janvier à Octobre)
               </Typography>
@@ -254,7 +254,7 @@ export default function Home() {
             </Paper>
 
             {/* Légende */}
-            <Paper sx={{ padding: 3, marginBottom: 4, backgroundColor: '#fff9c4', boxShadow: 2 }}>
+            <Paper sx={{ padding: 1, marginBottom: 4, backgroundColor: '#fff9c4', boxShadow: 2 }}>
               <Typography variant="h6" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
                 📖 Légende des Abréviations
               </Typography>
@@ -292,9 +292,9 @@ export default function Home() {
             </Button>
           </Box>
         ) : (
-          <Paper sx={{ padding: 3, boxShadow: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-              <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#333' }}>
+          <Paper sx={{ padding: 1, boxShadow: 3 }}>
+            <Box sx={{ display: 'flex', rowGap: 2, justifyContent: 'space-between', marginBottom: 4, flexDirection: {xs: "column", sm: "column", md: "row"}, alignItems:{xs: "flex-start", sm: "flex-start", md: "none"} }}>
+              <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#333' }}>
                 📊 Récapitulatif Annuel {currentYear}
               </Typography>
               <Button onClick={() => setShowRecap(false)} variant="outlined" color="secondary">
