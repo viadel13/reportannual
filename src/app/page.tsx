@@ -10,16 +10,16 @@ export default function Home() {
   
   // Données mensuelles avec EC, ER et IR pour chaque mois
   const [monthlyData, setMonthlyData] = useState<any>({
-    janvier: { ec: '', er: '5000', ir: '150' },
-    fevrier: { ec: '', er: '5000', ir: '150' },
-    mars: { ec: '', er: '5000', ir: '150' },
-    avril: { ec: '', er: '5000', ir: '150' },
-    mai: { ec: '', er: '5000', ir: '150' },
-    juin: { ec: '', er: '5000', ir: '150' },
-    juillet: { ec: '', er: '5000', ir: '150' },
-    aout: { ec: '', er: '5000', ir: '150' },
-    septembre: { ec: '', er: '5000', ir: '150' },
-    octobre: { ec: '', er: '5000', ir: '150' }
+    janvier: { ec: '', er: '639550', ir: '12000' },
+    fevrier: { ec: '', er: '166000', ir: '20000' },
+    mars: { ec: '', er: '232600', ir: '27000' },
+    avril: { ec: '', er: '249950', ir: '30000' },
+    mai: { ec: '', er: '377000', ir: '35000' },
+    juin: { ec: '', er: '271500', ir: '37000' },
+    juillet: { ec: '', er: '183000', ir: '28000' },
+    aout: { ec: '', er: '134800', ir: '37000' },
+    septembre: { ec: '', er: '237300', ir: '36000' },
+    octobre: { ec: '', er: '320500', ir: '9000' }
   });
   
   // État pour gérer l'ouverture/fermeture des collapses
@@ -65,55 +65,58 @@ export default function Home() {
 
   const calculateResults = () => {
     const results: any[] = [];
-    
+
     let TR_prev = 0;
     let CC_prev = 0;
 
     mois.forEach((month, index) => {
+      // On récupère toujours la partie entière
       const EC = Math.floor(parseFloat(monthlyData[month].ec) || 0);
       const ER = Math.floor(parseFloat(monthlyData[month].er) || 0);
       const IR = Math.floor(parseFloat(monthlyData[month].ir) || 0);
-      
+
       let TR, IC, CC;
       let formuleTR, formuleIC, formuleCC;
 
       if (index === 0) {
         // JANVIER
         TR = ER;
-        IC = (EC * IR) / TR;
-        CC = EC + IC + (Math.floor(parseFloat(monthlyData[mois[1]].ec) || 0));
+        IC = Math.floor((EC * IR) / TR);
 
-        formuleTR = `ER${moisLabels[0]} = ${ER.toFixed(0)}`;
-        formuleIC = `(EC${moisLabels[0]} × IR${moisLabels[0]}) ÷ TR${moisLabels[0]} = (${EC.toFixed(0)} × ${IR.toFixed(0)}) ÷ ${TR.toFixed(0)}`;
-        formuleCC = `EC${moisLabels[0]} + IC${moisLabels[0]} + EC${moisLabels[1]} = ${EC.toFixed(0)} + ${IC.toFixed(0)} + ${(Math.floor(parseFloat(monthlyData[mois[1]].ec) || 0)).toFixed(0)}`;
+        const nextEC = Math.floor(parseFloat(monthlyData[mois[1]].ec) || 0);
+        CC = Math.floor(EC + IC + nextEC);
+
+        formuleTR = `ER${moisLabels[0]} = ${ER}`;
+        formuleIC = `(EC${moisLabels[0]} × IR${moisLabels[0]}) ÷ TR${moisLabels[0]} = (${EC} × ${IR}) ÷ ${TR}`;
+        formuleCC = `EC${moisLabels[0]} + IC${moisLabels[0]} + EC${moisLabels[1]} = ${EC} + ${IC} + ${nextEC}`;
       } else {
-        // FEVRIER à OCTOBRE
-        const IR_prev = Math.floor(parseFloat(monthlyData[mois[index-1]].ir) || 0);
-        const ER_prev = Math.floor(parseFloat(monthlyData[mois[index-1]].er) || 0);
-        
-        TR = TR_prev + IR_prev + ER;
-        IC = (CC_prev * IR) / TR;
+        const IR_prev = Math.floor(parseFloat(monthlyData[mois[index - 1]].ir) || 0);
+
+        TR = Math.floor(TR_prev + IR_prev + ER);
+
+        IC = Math.floor((CC_prev * IR) / TR);
+
         const nextEC = index < 9 ? Math.floor(parseFloat(monthlyData[mois[index + 1]].ec) || 0) : 0;
-        CC = CC_prev + IC + nextEC;
 
-        formuleTR = `TR${moisLabels[index-1]} + IR${moisLabels[index-1]} + ER${moisLabels[index]} = ${TR_prev.toFixed(0)} + ${IR_prev.toFixed(0)} + ${ER.toFixed(0)}`;
-        formuleIC = `(CC${moisLabels[index-1]} × IR${moisLabels[index]}) ÷ TR${moisLabels[index]} = (${CC_prev.toFixed(0)} × ${IR.toFixed(0)}) ÷ ${TR.toFixed(0)}`;
+        CC = Math.floor(CC_prev + IC + nextEC);
 
-        if (index < 9) {
-          formuleCC = `CC${moisLabels[index-1]} + IC${moisLabels[index]} + EC${moisLabels[index+1]} = ${CC_prev.toFixed(0)} + ${IC.toFixed(0)} + ${nextEC.toFixed(0)}`;
-        } else {
-          formuleCC = `CC${moisLabels[index-1]} + IC${moisLabels[index]} = ${CC_prev.toFixed(0)} + ${IC.toFixed(0)}`;
-        }
+        formuleTR = `TR${moisLabels[index - 1]} + IR${moisLabels[index - 1]} + ER${moisLabels[index]} = ${TR_prev} + ${IR_prev} + ${ER}`;
+        formuleIC = `(CC${moisLabels[index - 1]} × IR${moisLabels[index]}) ÷ TR${moisLabels[index]} = (${CC_prev} × ${IR}) ÷ ${TR}`;
+        formuleCC =
+            index < 9
+                ? `CC${moisLabels[index - 1]} + IC${moisLabels[index]} + EC${moisLabels[index + 1]} = ${CC_prev} + ${IC} + ${nextEC}`
+                : `CC${moisLabels[index - 1]} + IC${moisLabels[index]} = ${CC_prev} + ${IC}`;
       }
 
+      // Ajout dans la liste des résultats
       results.push({
         mois: moisLabels[index],
-        ER: ER.toFixed(0),
-        IR: IR.toFixed(0),
-        TR: TR.toFixed(0),
-        EC: EC.toFixed(0),
-        IC: IC.toFixed(0),
-        CC: CC.toFixed(0),
+        ER: ER.toString(),
+        IR: IR.toString(),
+        TR: TR.toString(),
+        EC: EC.toString(),
+        IC: IC.toString(),
+        CC: CC.toString(),
         formules: {
           TR: formuleTR,
           IC: formuleIC,
@@ -121,12 +124,14 @@ export default function Home() {
         }
       });
 
+      // Mise à jour pour le mois suivant
       TR_prev = TR;
       CC_prev = CC;
     });
 
     return results;
   };
+
 
   return (
     <Box sx={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, #e0f2f1, #bbdefb)', padding: 3 }}>
