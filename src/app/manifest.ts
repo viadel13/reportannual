@@ -6,6 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
         short_name: "ReportAnnual",
         description:
             "Application de bilan financier annuel avec saisie mensuelle et récapitulatif dynamique.",
+        id: "/",
         start_url: "/",
         display: "standalone",
         background_color: "#e8f5e9",
@@ -18,7 +19,19 @@ export default function manifest(): MetadataRoute.Manifest {
                 src: "/icon-192.png",
                 sizes: "192x192",
                 type: "image/png",
+                purpose: "any",
+            },
+            {
+                src: "/icon-192.png",
+                sizes: "192x192",
+                type: "image/png",
                 purpose: "maskable",
+            },
+            {
+                src: "/icon-512.png",
+                sizes: "512x512",
+                type: "image/png",
+                purpose: "any",
             },
             {
                 src: "/icon-512.png",
