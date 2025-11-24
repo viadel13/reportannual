@@ -20,6 +20,19 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Progressive Web App
+
+- Manifeste disponible via `/manifest.json` avec icônes 192×192 et 512×512 (maskable), couleurs de thème et affichage `standalone`.
+- Service worker statique (`public/sw.js`) actif en production : installation, activation, stratégie cache-first avec repli hors-ligne et purge des anciens caches.
+- Enregistrement côté client via un composant dédié (voir `src/app/pwa-client.tsx`) et bouton d'installation lorsqu'un événement `beforeinstallprompt` est disponible.
+- Fonctionne sans plugin Webpack pour rester compatible avec Turbopack (build script `npm run build`).
+
+### Rapport de tests d'installabilité
+
+- Navigateurs testés dans cet environnement : aucun navigateur graphique disponible dans le conteneur, tests manuels non réalisables ici.
+- Pré-requis vérifiés par le code : manifeste détectable, service worker enregistré dès qu'un contexte sécurisé (HTTPS) est utilisé, bouton d'installation pour Chrome/Edge et instructions de repli pour Safari/Firefox.
+- Si l'installation ne se déclenche pas : vérifier l'accès en HTTPS, la présence du service worker actif, ou utiliser "Ajouter à l'écran d'accueil" sur Safari/iOS qui ne déclenche pas toujours `beforeinstallprompt`.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

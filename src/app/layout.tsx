@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { PwaClient } from "./pwa-client";
 import "./globals.css";
 
 
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
     description:
         "Application web pour suivre les dépôts clients et générer un bilan financier annuel interactif.",
     applicationName: "ReportAnnual",
-    manifest: "/manifest.webmanifest",
+    manifest: "/manifest.json",
     appleWebApp: {
         capable: true,
         statusBarStyle: "default",
@@ -56,6 +57,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body>
+        <PwaClient />
         {children}
       </body>
     </html>
