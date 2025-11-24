@@ -16,6 +16,8 @@
 # next.js
 /.next/
 /out/
+public/workbox-*.js
+public/swe-worker-*.js
 
 # production
 /build
