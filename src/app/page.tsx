@@ -1,8 +1,8 @@
 "use client"
 
 import React, { useState } from 'react';
-import { CalendarToday, TrendingUp, Description, ExpandMore } from '@mui/icons-material';
-import { TextField, Button, Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Collapse, IconButton } from '@mui/material';
+import { CalendarToday, TrendingUp, Description, ExpandMore, PictureAsPdf, TableView } from '@mui/icons-material';
+import { TextField, Button, Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Collapse } from '@mui/material';
 import Grid from '@mui/material/Grid';
 
 export default function Home() {
@@ -130,6 +130,112 @@ export default function Home() {
     });
 
     return results;
+  };
+
+  const results = calculateResults();
+  const totalEpargneClient = mois.reduce((sum, m) => sum + (parseInt(monthlyData[m].ec) || 0), 0);
+  const totalInterets = results.reduce((sum, row) => sum + parseFloat(row.IC), 0);
+  const capitalFinal = results[results.length - 1]?.CC || '0';
+
+  const exportToPDF = async () => {
+    const [jsPDFImport, autoTableModule]: any = await Promise.all([
+      import('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js'),
+      import('https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.js')
+    ]);
+
+    const jsPDFConstructor = jsPDFImport.jsPDF || jsPDFImport.default?.jsPDF || jsPDFImport.default || jsPDFImport;
+    const doc = new jsPDFConstructor();
+
+    doc.setFontSize(16);
+    doc.text(`Bilan Financier Annuel – Année ${currentYear}`, 14, 18);
+
+    doc.setFontSize(12);
+    doc.text(`Total Épargne Client : ${totalEpargneClient.toFixed(0)} FRCFA`, 14, 30);
+    doc.text(`Capital Final (CC) : ${capitalFinal} FRCFA`, 14, 38);
+    doc.text(`Intérêts Totaux (IC) : ${totalInterets.toFixed(0)} FRCFA`, 14, 46);
+
+    const head = [['DATE', 'ER', 'IR', 'TR', 'EC', 'IC', 'CC']];
+    const body = results.flatMap((row: any) => [
+      [
+        row.mois,
+        `${row.ER} FRCFA`,
+        `${row.IR} FRCFA`,
+        `${row.TR} FRCFA`,
+        `${row.EC} FRCFA`,
+        `${row.IC} FRCFA`,
+        `${row.CC} FRCFA`
+      ],
+      ['Formule', '-', '-', row.formules.TR, '-', row.formules.IC, row.formules.CC]
+    ]);
+
+    const autoTable = autoTableModule.default || autoTableModule.autoTable || autoTableModule;
+
+    autoTable(doc, {
+      head,
+      body,
+      startY: 54,
+      styles: { halign: 'right', cellPadding: 3, fontSize: 10 },
+      headStyles: { fillColor: [25, 118, 210], textColor: 255, fontStyle: 'bold', halign: 'right' },
+      columnStyles: { 0: { halign: 'left', fontStyle: 'bold' } },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+      bodyStyles: { textColor: [51, 51, 51] },
+      didParseCell: (data: any) => {
+        if (data.section === 'body' && data.row.raw[0] === 'Formule') {
+          data.cell.styles.fontStyle = 'italic';
+          data.cell.styles.fontSize = 9;
+          data.cell.styles.textColor = [102, 102, 102];
+          data.cell.styles.halign = data.column.index === 0 ? 'left' : 'right';
+          data.cell.styles.fillColor = [255, 253, 231];
+        }
+      }
+    });
+
+    doc.save(`bilan-financier-${currentYear}.pdf`);
+  };
+
+  const exportToExcel = async () => {
+    const [xlsxImport, fileSaverModule]: any = await Promise.all([
+      import('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm'),
+      import('https://cdn.jsdelivr.net/npm/file-saver@2.0.5/+esm')
+    ]);
+
+    const XLSXModule = xlsxImport.default || xlsxImport;
+
+    const worksheetData = [
+      ['DATE', 'ER', 'IR', 'TR', 'EC', 'IC', 'CC'],
+      ...results.flatMap((row: any) => [
+        [
+          row.mois,
+          `${row.ER} FRCFA`,
+          `${row.IR} FRCFA`,
+          `${row.TR} FRCFA`,
+          `${row.EC} FRCFA`,
+          `${row.IC} FRCFA`,
+          `${row.CC} FRCFA`
+        ],
+        ['Formule', '-', '-', row.formules.TR, '-', row.formules.IC, row.formules.CC]
+      ])
+    ];
+
+    const worksheet = XLSXModule.utils.aoa_to_sheet(worksheetData);
+    worksheet['!cols'] = [
+      { wch: 14 },
+      { wch: 16 },
+      { wch: 16 },
+      { wch: 24 },
+      { wch: 16 },
+      { wch: 32 },
+      { wch: 32 }
+    ];
+
+    const workbook = XLSXModule.utils.book_new();
+    XLSXModule.utils.book_append_sheet(workbook, worksheet, 'Bilan Annuel');
+
+    const excelBuffer = XLSXModule.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+    const saveAs = fileSaverModule.saveAs || fileSaverModule.default;
+    saveAs(blob, `bilan-financier-${currentYear}.xlsx`);
   };
 
 
@@ -297,9 +403,17 @@ export default function Home() {
               <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#333' }}>
                 📊 Récapitulatif Annuel {currentYear}
               </Typography>
-              <Button onClick={() => setShowRecap(false)} variant="outlined" color="secondary">
-                Modifier
-              </Button>
+              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                <Button onClick={exportToPDF} variant="contained" color="primary" startIcon={<PictureAsPdf />}>
+                  Exporter en PDF
+                </Button>
+                <Button onClick={exportToExcel} variant="outlined" color="primary" startIcon={<TableView />}>
+                  Exporter en Excel
+                </Button>
+                <Button onClick={() => setShowRecap(false)} variant="outlined" color="secondary">
+                  Modifier
+                </Button>
+              </Box>
             </Box>
 
             {/* Résumé global */}
@@ -308,7 +422,7 @@ export default function Home() {
                 <Paper sx={{ padding: 2, backgroundColor: '#f3e5f5', boxShadow: 2 }}>
                   <Typography variant="body1" sx={{ color: '#555' }}>Total Épargne Client</Typography>
                   <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#9c27b0' }}>
-                    {mois.reduce((sum, m) => sum + (parseInt(monthlyData[m].ec) || 0), 0).toFixed(0)} FRCFA
+                    {totalEpargneClient.toFixed(0)} FRCFA
                   </Typography>
                 </Paper>
               </Grid>
@@ -316,7 +430,7 @@ export default function Home() {
                 <Paper sx={{ padding: 2, backgroundColor: '#e3f2fd', boxShadow: 2 }}>
                   <Typography variant="body1" sx={{ color: '#555' }}>Capital Final (CC)</Typography>
                   <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#2196f3' }}>
-                    {calculateResults()[9]?.CC || '0'} FRCFA
+                    {capitalFinal} FRCFA
                   </Typography>
                 </Paper>
               </Grid>
@@ -324,7 +438,7 @@ export default function Home() {
                 <Paper sx={{ padding: 2, backgroundColor: '#c8e6c9', boxShadow: 2 }}>
                   <Typography variant="body1" sx={{ color: '#555' }}>Intérêts Totaux (IC)</Typography>
                   <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#388e3c' }}>
-                    {calculateResults().reduce((sum, row) => sum + parseFloat(row.IC), 0).toFixed(0)} FRCFA
+                    {totalInterets.toFixed(0)} FRCFA
                   </Typography>
                 </Paper>
               </Grid>
@@ -345,7 +459,7 @@ export default function Home() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {calculateResults().map((row, index) => (
+                  {results.map((row, index) => (
                     <React.Fragment key={index}>
                       {/* Ligne des valeurs */}
                       <TableRow sx={{ backgroundColor: index % 2 === 0 ? '#f5f5f5' : 'white' }}>
@@ -404,8 +518,8 @@ export default function Home() {
               </Box>
             </Paper>
           </Paper>
-        )}
+          )}
+        </Box>
       </Box>
-    </Box>
-  );
-        }
+    );
+}
