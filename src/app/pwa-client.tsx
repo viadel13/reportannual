@@ -78,14 +78,14 @@ export function PwaClient() {
   }, [status]);
 
   return (
-    <div className="pwa-helper">
-      <div className="pwa-helper__row">
-        <span className="pwa-helper__status">Manifeste: /manifest.json</span>
-        <span className="pwa-helper__status">SW: {helperMessage}</span>
-        <span className="pwa-helper__status">
-          Mode installé: {isStandalone ? "standalone" : "navigateur"}
-        </span>
-      </div>
+    <div className="pwa-helperd">
+      {/*<div className="pwa-helper__row">*/}
+      {/*  <span className="pwa-helper__status">Manifeste: /manifest.json</span>*/}
+      {/*  <span className="pwa-helper__status">SW: {helperMessage}</span>*/}
+      {/*  <span className="pwa-helper__status">*/}
+      {/*    Mode installé: {isStandalone ? "standalone" : "navigateur"}*/}
+      {/*  </span>*/}
+      {/*</div>*/}
 
       {reason && <p className="pwa-helper__note">{reason}</p>}
 
@@ -102,10 +102,10 @@ export function PwaClient() {
         )}
       </div>
 
-      <p className="pwa-helper__note">
-        Si aucun bouton n'apparaît (Safari, Firefox), ajoutez manuellement la page à l'écran d'accueil
-        ou vérifiez que la navigation est servie en HTTPS.
-      </p>
+      {/*<p className="pwa-helper__note">*/}
+      {/*  Si aucun bouton n'apparaît (Safari, Firefox), ajoutez manuellement la page à l'écran d'accueil*/}
+      {/*  ou vérifiez que la navigation est servie en HTTPS.*/}
+      {/*</p>*/}
     </div>
   );
 }
