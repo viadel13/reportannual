@@ -380,7 +380,6 @@ export async function POST(request: NextRequest) {
               ],
             }),
 
-            // Section Résumé Global
             new Paragraph({
               heading: HeadingLevel.HEADING_2,
               spacing: { before: 200, after: 300 },
