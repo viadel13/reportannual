@@ -615,8 +615,11 @@ export async function POST(request: NextRequest) {
     // Générer le buffer
     const buffer = await Packer.toBuffer(doc);
 
+    // Convertir le Buffer Node.js en Uint8Array pour Next.js
+    const uint8Array = new Uint8Array(buffer);
+
     // Retourner le fichier
-    return new NextResponse(buffer, {
+    return new NextResponse(uint8Array, {
       status: 200,
       headers: {
         "Content-Type":
